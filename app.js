@@ -1,13 +1,13 @@
 const express = require('express');
 const res = require('express/lib/response');
 const app = express();
-//const userRoutes = require('./routes/user');
-//const stuffRoutes = require('./routes/sauce');
+userRoutes = require('./routes/user');
+saucesRoutes = require('./routes/sauce');
 const path = require('path');
 
 /* MongoDB */
 const mongoose = require('mongoose');
-const uri = "mongodb+srv://Tom:MongoDB@cluster0.afknvvw.mongodb.net/?retryWrites=true&w=majority";
+const uri = "mongodb+srv://Tom:MongoDB@cluster0.afknvvw.mongodb.net/P6?retryWrites=true&w=majority";
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true})  
   .then( () => console.log('Connexion à MongoDB par mongoose réussie !'))
   .catch( err => console.log('Connexion à MongoDB par mongoose échouée ! ' + err)) 
@@ -20,6 +20,10 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     next();
 });
+
+
+
+
 
 app.use(express.json()); /* intercepte tout Json depuis la requête HTPP , pour mettre le corps à disposition(req) */
 

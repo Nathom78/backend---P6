@@ -1,5 +1,8 @@
-const https = require('https');
+//const https = require('https');
+const http = require('http');
 const app = require('./app');
+const fs = require("fs");
+
 
 const normalizePort = val => {
   const port = parseInt(val, 10);
@@ -34,9 +37,14 @@ const errorHandler = error => {
       throw error;
   }
 };
+/*const options = {
+  key: fs.readFileSync("server.key"),
+  cert: fs.readFileSync("server.cert"),
+  passphrase: "test",
+};
+const server = https.createServer(options, app);*/
 
-const server = https.createServer(app);
-
+const server = http.createServer(app);
 server.on('error', errorHandler);
 server.on('listening', () => {
   const address = server.address();
@@ -45,3 +53,6 @@ server.on('listening', () => {
 });
 
 server.listen(port);
+
+
+
