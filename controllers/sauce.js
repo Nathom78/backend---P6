@@ -9,8 +9,8 @@ exports.createSauce = (req, res, next) => {
     imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
     likes: 0,
     dislikes: 0,
-    usersLiked: "",
-    usersDisliked:"",
+    usersLiked: [],
+    usersDisliked: [],
   });
   sauce.save()
     .then(() => res.status(201).json({ message: 'enregistré!'}))
@@ -55,6 +55,7 @@ exports.modifySauce = (req, res, next) => {
 
   } :
   { ...req.body };
+
   Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
     .then(() => res.status(200).json({ message: 'Objet modifié !'}))
     .catch(error => res.status(400).json({ error }));     
@@ -103,57 +104,56 @@ exports.getAllSauce = (req, res, next) => {
 exports.likeSauce = (req, res, next) => {
   
   Sauce.findOne({ _id: req.params.id })
-  .then(sauce => {
+  .then(sauce => {    
+    var indexOfUserLiked = sauce.usersLiked.indexOf(req.body.userId);
+    var indexOfUserDisliked = sauce.usersDisliked.indexOf(req.body.userId);
+    
     switch (req.body.like) {
+      
       //Si l'utilisateur dislike : 
       case -1:
-          Sauce.updateOne({ _id: req.params.id }, {
-              $inc: { dislikes: 1 },
-              $push: { usersDisliked: req.body.userId },
-              _id: req.params.id
-          })
-              .then(() => res.status(201).json({ message: 'Dislike pris en compte !' }))
-              .catch(error => res.status(400).json({ error }))
-          break;
+        if(indexOfUserDisliked == -1){
+          sauce.dislikes++;
+          sauce.usersDisliked.push(req.body.userId);
+        }        
+      break;
 
       //Si like ou dislike ! de 0, on retire le like / dislike'
       case 0:
-          //Si la sauce est déjà liké :
-          if (sauce.usersLiked.find(user => user === req.body.userId)) {
-              Sauce.updateOne({ _id: req.params.id }, {
-                  $inc: { likes: -1 },
-                  $pull: { usersLiked: req.body.userId },
-                  _id: req.params.id
-              })
-                  .then(() => res.status(201).json({ message: ' Avis mis à jour !' }))
-                  .catch(error => res.status(400).json({ error }))
-          }
+        //Si la sauce est déjà liké :          
+        if (indexOfUserLiked > -1) {
+          sauce.likes--;
+          sauce.usersLiked.splice(indexOfUserLiked,1);            
+        }
+        //Si la sauce est déjà disliké :
+        if (indexOfUserDisliked > -1) {
+          sauce.dislikes--;
+          sauce.usersDisliked.splice(indexOfUserDisliked,1);
+        }          
+      break;
 
-          //Si la sauce est déjà disliké :
-          if (sauce.usersDisliked.find(user => user === req.body.userId)) {
-              Sauce.updateOne({ _id: req.params.id }, {
-                  $inc: { dislikes: -1 },
-                  $pull: { usersDisliked: req.body.userId },
-                  _id: req.params.id
-              })
-                  .then(() => res.status(201).json({ message: ' Avis mis à jour !' }))
-                  .catch(error => res.status(400).json({ error }));
-          }
-          break;
-
-      //Si l'utilisateur like la sauce, +1 :
+      //Si l'utilisateur like la sauce :
       case 1:
-          Sauce.updateOne({ _id: req.params.id }, {
-              $inc: { likes: 1 },
-              $push: { usersLiked: req.body.userId },
-              _id: req.params.id
-          })
-              .then(() => res.status(201).json({ message: 'Like pris en compte !' }))
-              .catch(error => res.status(400).json({ error }));
-          break;
+        if(indexOfUserLiked == -1){
+          sauce.likes++;
+          sauce.usersLiked.push(req.body.userId);
+        }         
+      break;
+
+      // sinon il y a une erreur  
       default:
-          return res.status(500).json({ error });
+        return res.status(500).json({ error });
     }
+
+    Sauce.updateOne({ _id: req.params.id }, {
+      usersLiked: sauce.usersLiked,
+      usersDisliked : sauce.usersDisliked,
+      likes: sauce.likes,
+      dislikes: sauce.dislikes,
+      _id: req.params.id
+    })
+    .then(() => res.status(201).json({ message: 'Avis pris en compte !' }))
+    .catch(error => res.status(400).json({ error }));
     
   })
   .catch(error => res.status(500).json({ error }));  
