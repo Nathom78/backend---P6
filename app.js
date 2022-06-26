@@ -6,9 +6,24 @@ const path = require('path');
 const dotenv = require("dotenv");
 dotenv.config();
 
+// Helmet helps you secure your Express apps by setting various HTTP headers. It's not a silver bullet, but it can help!
 
 var helmet = require('helmet');   
 app.use(helmet());
+
+// By default, $ and . characters are removed completely from user-supplied input in the following places:
+// - req.body
+// - req.params
+// - req.headers
+// - req.query
+
+// To remove data using these defaults:
+
+const mongoSanitize = require('express-mongo-sanitize');
+app.use(mongoSanitize());
+
+
+/* MongoDB */
 
 const DB = {
   DB_ID: process.env.DB_ID,
@@ -16,7 +31,6 @@ const DB = {
   DB_MDP: process.env.DB_MDP,
 };
 
-/* MongoDB */
 const mongoose = require('mongoose');
 const uri = "mongodb+srv://"+DB.DB_ID+":"+DB.DB_MDP+"@"+DB.DB_ADDRESS;
 
