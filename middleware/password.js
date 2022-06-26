@@ -21,7 +21,7 @@ passwordSchema
   .spaces() // Should not have spaces
   .is()
   .not()
-  .oneOf(["Passw0rd", "Password123"]); // Blacklist these values
+  .oneOf(["Password", "Password123"]); // Blacklist these values
 
 
 // Validation du mot de passe en fonction de son schéma pour le SignUp
@@ -33,7 +33,7 @@ module.exports = (req, res, next) => {
     return (
       res.writeHead(
         400,
-        "Votre mot de passe doit contenir entre 8 et 16 caractères et 2 chiffres"
+        "Votre mot de passe doit contenir entre 8 et 16 caractères, 2 chiffres, et une majuscule "
       ),
       res.end(
         "Votre mot de passe doit contenir entre 8 et 16 caractères et 2 chiffres"
