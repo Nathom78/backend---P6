@@ -35,13 +35,19 @@ exports.getOneSauce = (req, res, next) => {
 
 
 exports.modifySauce = (req, res, next) => {
+
+  /*if (req.body.sauce.userId !== req.auth.userId) {
+    res.status(400).json({
+    error: new Error('requéte non autorisé!')
+  });
+}*/
   // suprimer l'ancienne image si on la modifie
   if (req.file)
     {     
       Sauce.findOne({ _id: req.params.id })
-      .then(sauce => {
+      .then(sauce => {        
         const filename = sauce.imageUrl.split('/images/')[1];
-        exists(`images/${filename}`, (exist) => {
+        fs.exists(`images/${filename}`, (exist) => {          
           if(exist) fs.unlink(`images/${filename}`,() => {})
         });        
       })
@@ -52,13 +58,12 @@ exports.modifySauce = (req, res, next) => {
   {
     ...JSON.parse(req.body.sauce),
     imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-
   } :
   { ...req.body };
 
   Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
-    .then(() => res.status(200).json({ message: 'Objet modifié !'}))
-    .catch(error => res.status(400).json({ error }));     
+  .then(() => res.status(200).json({ message: 'Objet modifié !'}))
+  .catch(error => res.status(400).json({ error }));     
 };
 
 

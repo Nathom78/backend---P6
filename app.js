@@ -5,6 +5,11 @@ userRoutes = require('./routes/user');
 saucesRoutes = require('./routes/sauce');
 const path = require('path');
 
+
+var helmet = require('helmet')
+   
+app.use(helmet());   
+
 /* MongoDB */
 const mongoose = require('mongoose');
 const uri = "mongodb+srv://Tom:MongoDB@cluster0.afknvvw.mongodb.net/P6?retryWrites=true&w=majority";
@@ -12,6 +17,7 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true})
   .then( () => console.log('Connexion à MongoDB par mongoose réussie !'))
   .catch( err => console.log('Connexion à MongoDB par mongoose échouée ! ' + err)) 
 ;
+
 
 /* configuration CORS */
 app.use((req, res, next) => {
