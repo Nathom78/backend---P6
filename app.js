@@ -7,8 +7,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 
-var helmet = require('helmet');
-   
+var helmet = require('helmet');   
 app.use(helmet());
 
 const DB = {
