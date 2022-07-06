@@ -11,6 +11,7 @@ dotenv.config();
 var helmet = require('helmet');   
 app.use(helmet());
 
+// express-mongo-sanitize
 // By default, $ and . characters are removed completely from user-supplied input in the following places:
 // - req.body
 // - req.params

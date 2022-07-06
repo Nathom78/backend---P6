@@ -36,11 +36,6 @@ exports.getOneSauce = (req, res, next) => {
 
 exports.modifySauce = (req, res, next) => {
 
-  /*if (req.body.sauce.userId !== req.auth.userId) {
-    res.status(400).json({
-    error: new Error('requéte non autorisé!')
-  });
-}*/
   // suprimer l'ancienne image si on la modifie
   if (req.file)
     {     
