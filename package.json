@@ -21,7 +21,7 @@
     "chokidar": "^3.5.3",
     "crypto-js": "^4.2.0",
     "dotenv": "^16.0.1",
-    "express": "^4.18.1",
+    "express": "^4.19.2",
     "express-mongo-sanitize": "^2.2.0",
     "glob-parent": "^6.0.2",
     "got": "^12.1.0",
